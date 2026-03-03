@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>¿Te atreves?</title>
+
+<style>
+body{
+    margin:0;
+    font-family:Arial, sans-serif;
+    min-height:100vh;
+    overflow-x:hidden;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:linear-gradient(135deg,#ef75ff,#f872ed);
+    color:white;
+    text-align:center;
+}
+
+.container{
+    position:relative;
+    width:100%;
+    height:100vh;
+}
+
+h1{
+    margin-top:40px;
+    font-size:28px;
+}
+
+.message{
+    margin-top:10px;
+    min-height:30px;
+    font-size:18px;
+}
+
+#yesBtn, #noBtn{
+    padding:12px 25px;
+    border:none;
+    border-radius:30px;
+    font-size:16px;
+    cursor:pointer;
+    transition:0.3s;
+    position:absolute;
+}
+
+#yesBtn{
+    background:white;
+    color:#7a5fff;
+    left:50%;
+    top:55%;
+    transform:translateX(-50%);
+}
+
+#noBtn{
+    background:black;
+    color:white;
+    left:50%;
+    top:65%;
+    transform:translateX(-50%);
+}
+
+.hidden{
+    display:none;
+}
+
+form{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    width:90%;
+    max-width:350px;
+    margin:30px auto;
+}
+
+input, select, textarea{
+    padding:12px;
+    border-radius:10px;
+    border:none;
+    font-size:14px;
+}
+
+/* SOLO el botón del formulario */
+form button{
+    position:static;
+    background:white;
+    color:#7a5fff;
+    font-weight:bold;
+    padding:12px;
+    border-radius:25px;
+    cursor:pointer;
+}
+
+#resultCard{
+    margin-top:20px;
+    background:white;
+    color:#7a5fff;
+    padding:20px;
+    border-radius:15px;
+    width:90%;
+    max-width:350px;
+    margin-left:auto;
+    margin-right:auto;
+}
+</style>
+</head>
+<body>
+
+<div class="container" id="mainScreen">
+
+    <h1>¿Quieres hablar conmigo? </h1>
+    <div class="message" id="message"></div>
+
+    <button id="yesBtn">Sí </button>
+    <button id="noBtn">No </button>
+
+</div>
+
+<div class="hidden" id="formScreen">
+    <h1>Porfin se decidio c: </h1>
+
+    <form id="contactForm">
+        <input type="text" placeholder="Nombre completo" required>
+        <input type="tel" placeholder="Número telefónico" required>
+        <input type="text" placeholder="Instagram" required>
+        <textarea placeholder="¿Qué te hizo darle que sí?" required></textarea>
+
+        <select required>
+            <option value="">¿Qué plan te gusta más?</option>
+            <option>salir a comer empanadas</option>
+            <option>Salir a bailar</option>
+            <option>Caminar en el barrio</option>
+            <option>Ver peliculas</option>
+        </select>
+
+        <button type="submit">Enviar</button>
+    </form>
+
+    <div id="resultCard" class="hidden"></div>
+</div>
+
+<script>
+let noBtn = document.getElementById("noBtn");
+let yesBtn = document.getElementById("yesBtn");
+let message = document.getElementById("message");
+
+let attempts = 0;
+
+let messages = [
+"¿Segura?",
+"Hagale, no seas así",
+"Solo esta vez",
+"Solo unos Dias",
+"No te vas a arrepentir",
+"le compro empanada ",
+"Último intento ",
+"enserio ?",
+"El destino nos llama ",
+"Bueno… lo intenté"
+];
+
+noBtn.addEventListener("click", function(){
+
+    if(attempts < 10){
+
+        message.textContent = messages[attempts];
+
+        attempts++;
+
+        // hacer más pequeño el botón NO
+        let scaleNo = 1 - attempts * 0.07;
+        noBtn.style.transform = `scale(${scaleNo})`;
+
+        // hacer más grande el botón SI
+        let scaleYes = 1 + attempts * 0.05;
+        yesBtn.style.transform = `translateX(-50%) scale(${scaleYes})`;
+
+        moveNoButton();
+
+    } else {
+
+        noBtn.classList.add("hidden");
+        message.textContent = "Ups, creo que el boton se daño...";
+    }
+
+});
+
+function moveNoButton(){
+
+    let screenWidth = window.innerWidth;
+    let screenHeight = window.innerHeight;
+
+    let randomX;
+    let randomY;
+
+    // 30% probabilidad de acercarse al botón SI
+    if(Math.random() < 0.3){
+
+        let yesRect = yesBtn.getBoundingClientRect();
+
+        randomX = yesRect.left + (Math.random()*100 - 50);
+        randomY = yesRect.top + (Math.random()*100 - 50);
+
+    }else{
+
+        randomX = Math.random() * (screenWidth - 100);
+        randomY = Math.random() * (screenHeight - 50);
+    }
+
+    noBtn.style.left = randomX + "px";
+    noBtn.style.top = randomY + "px";
+}
+
+yesBtn.addEventListener("click", function(){
+    document.getElementById("mainScreen").classList.add("hidden");
+    document.getElementById("formScreen").classList.remove("hidden");
+});
+
+document.getElementById("contactForm").addEventListener("submit", function(e){
+    e.preventDefault();
+
+    let inputs = this.querySelectorAll("input, textarea, select");
+
+    let resultHTML = `
+        <h2> mi objetivo, ${inputs[0].value} ✨</h2>
+        <p><strong>Número:</strong> ${inputs[1].value}</p>
+        <p><strong>Instagram:</strong> ${inputs[2].value}</p>
+        <p><strong>Motivo:</strong> ${inputs[3].value}</p>
+        <p><strong>Plan favorito:</strong> ${inputs[4].value}</p>
+        <h3>Te voy a seguir y mas tarde le escribo jejejeje</h3>
+    `;
+
+    let resultCard = document.getElementById("resultCard");
+    resultCard.innerHTML = resultHTML;
+    resultCard.classList.remove("hidden");
+
+    this.reset();
+});
+</script>
+
+</body>
+</html>
