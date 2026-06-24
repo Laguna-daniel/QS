@@ -1,244 +1,99 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>¿Te atreves?</title>
-
-<style>
-body{
-    margin:0;
-    font-family:Arial, sans-serif;
-    min-height:100vh;
-    overflow-x:hidden;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    background:linear-gradient(135deg,#ef75ff,#f872ed);
-    color:white;
-    text-align:center;
-}
-
-.container{
-    position:relative;
-    width:100%;
-    height:100vh;
-}
-
-h1{
-    margin-top:40px;
-    font-size:28px;
-}
-
-.message{
-    margin-top:10px;
-    min-height:30px;
-    font-size:18px;
-}
-
-#yesBtn, #noBtn{
-    padding:12px 25px;
-    border:none;
-    border-radius:30px;
-    font-size:16px;
-    cursor:pointer;
-    transition:0.3s;
-    position:absolute;
-}
-
-#yesBtn{
-    background:white;
-    color:#7a5fff;
-    left:50%;
-    top:55%;
-    transform:translateX(-50%);
-}
-
-#noBtn{
-    background:black;
-    color:white;
-    left:50%;
-    top:65%;
-    transform:translateX(-50%);
-}
-
-.hidden{
-    display:none;
-}
-
-form{
-    display:flex;
-    flex-direction:column;
-    gap:12px;
-    width:90%;
-    max-width:350px;
-    margin:30px auto;
-}
-
-input, select, textarea{
-    padding:12px;
-    border-radius:10px;
-    border:none;
-    font-size:14px;
-}
-
-/* SOLO el botón del formulario */
-form button{
-    position:static;
-    background:white;
-    color:#7a5fff;
-    font-weight:bold;
-    padding:12px;
-    border-radius:25px;
-    cursor:pointer;
-}
-
-#resultCard{
-    margin-top:20px;
-    background:white;
-    color:#7a5fff;
-    padding:20px;
-    border-radius:15px;
-    width:90%;
-    max-width:350px;
-    margin-left:auto;
-    margin-right:auto;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>✦ El Cuarto de Sara ✦</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <!-- LOADING -->
+    <div id="loading">
+        <div class="loader-title">✦ cuarto de Sara ✦</div>
+        <div class="loader-sub">inesperado no ? JSJSJSJ</div>
+        <div class="loader-bar"><div class="loader-bar-inner"></div></div>
+    </div>
 
-<div class="container" id="mainScreen">
+    <!-- POPUP -->
+    <div class="popup-message" id="popupMessage">
+        <span class="emoji" id="popupEmoji">💜</span>
+        <span class="text" id="popupText">¡Mensaje mágico!</span>
+    </div>
 
-    <h1>¿Quieres hablar conmigo? </h1>
-    <div class="message" id="message"></div>
+    <div class="container">
+        <!-- HEADER -->
+        <div class="header">
+            <h1>✦ El Cuarto de Sara ✦</h1>
+            <p>esto lo hize por me nacio hacerlo, por que ? nose </p>
+            <div class="subtitle"> Toque cualquier tarjeta o abre la burbuja para que vea un mensaje</div>
+        </div>
 
-    <button id="yesBtn">Sí </button>
-    <button id="noBtn">No </button>
+        <!-- GRID DE TARJETAS -->
+        <div class="grid">
+            <div class="card" data-type="elephant">
+                <img src="images/dibujar-elefante-kawaii-tierno.jpg"Elefante" class="card-image" id="imgElefante">
+                <div class="card-title">🐘 Mi Animal Favorito</div>
+                <div class="card-description">Los elefantes son las criaturas más sabias y hermosas. ¡El animal que más raro que me han dicho que le gustan!</div>
+                <span class="card-badge">El Favorito</span>
+            </div>
 
-</div>
+            <div class="card" data-type="kitty">
+                <img src="images/hello kitty.jpg" alt="Hello Kitty" class="card-image" id="imgKitty">
+                <div class="card-title">🎀 Mi Muñeco Favorito</div>
+                <div class="card-description">Hello Kitty gana por completo. La compañera más tierna y el personaje preferido de sara</div>
+                <span class="card-badge">🌸 un rosa</span>
+            </div>
 
-<div class="hidden" id="formScreen">
-    <h1>Porfin se decidio c: </h1>
+            <div class="card" data-type="sushi">
+                <img src="URL_IMAGEN_SUSHI" alt="Sushi" class="card-image" id="imgSushi">
+                <div class="card-title">🍣 Mi Comida Favorita</div>
+                <div class="card-description">Un buen plato de sushi,es que le gusta la comida japonesa?</div>
+                <span class="card-badge">sushi</span>
+            </div>
 
-    <form id="contactForm">
-        <input type="text" placeholder="Nombre completo" required>
-        <input type="tel" placeholder="Número telefónico" required>
-        <input type="text" placeholder="Instagram" required>
-        <textarea placeholder="¿Qué te hizo darle que sí?" required></textarea>
+            <div class="card" data-type="peluches">
+                <img src="URL_IMAGEN_PELUCHES" alt="Peluches" class="card-image" id="imgPeluches">
+                <div class="card-title">🧸 Me encantan los peluches</div>
+                <div class="card-description">Esponjosos, tiernos y hermosos, justo como a Sara le fascinan para abrazarlos, supongo que tiene varios no?</div>
+                <span class="card-badge">💕 Súper Cute</span>
+            </div>
 
-        <select required>
-            <option value="">¿Qué plan te gusta más?</option>
-            <option>salir a comer empanadas</option>
-            <option>Salir a bailar</option>
-            <option>Caminar en el barrio</option>
-            <option>Ver peliculas</option>
-        </select>
+            <div class="card" data-type="rapunzel">
+                <img src="images/rapunzel.jpg" alt="Rapunzel" class="card-image" id="imgRapunzel">
+                <div class="card-title">✨ Rapunzel</div>
+                <div class="card-description">si le gusta rapunzel es por que no la dejan salir no? le atine? JAJAJAJAJ</div>
+                <span class="card-badge">🌟 pida permiso para salir mejor </span>
+            </div>
 
-        <button type="submit">Enviar</button>
-    </form>
+            <div class="card" data-type="purple">
+                <img src="URL_IMAGEN_MORADO" alt="Color Morado" class="card-image" id="imgMorado">
+                <div class="card-title">💜 Color Morado</div>
+                <div class="card-description">no sabia que poner de imagen, pero pues ahi tiene un planeta</div>
+                <span class="card-badge">morado</span>
+            </div>
+        </div>
 
-    <div id="resultCard" class="hidden"></div>
-</div>
+        <!-- AGENTE LAGUNA -->
+        <div class="laguna-agent-container">
+            <div class="laguna-bubble" id="lagunaBubble" onclick="toggleLagunaChat()">🔮</div>
+            <div class="laguna-window" id="lagunaWindow">
+                <div class="laguna-header">
+                    <span>Laguna IA</span>
+                    <span class="close-btn" onclick="toggleLagunaChat()">✕</span>
+                </div>
+                <div class="laguna-chat-area" id="lagunaChatArea">
+                    <div class="laguna-msg bot">¡Hola, sara! casi que no abre el chat, ahora no soy yo el que hace las preguntas, cualquier cosa estoy aca para explicarle.</div>
+                </div>
+                <div class="laguna-input-area">
+                    <input type="text" id="lagunaInput" placeholder="Pregúntame lo que sea, mi niña..." onkeydown="if(event.key === 'Enter') sendLagunaMessage()">
+                    <button onclick="sendLagunaMessage()">Enviar</button>
+                </div>
+            </div>
+        </div>
 
-<script>
-let noBtn = document.getElementById("noBtn");
-let yesBtn = document.getElementById("yesBtn");
-let message = document.getElementById("message");
+        <div class="footer">me trasnoche haciendo esto</div>
+    </div>
 
-let attempts = 0;
-
-let messages = [
-"¿Segura?",
-"Hagale, no seas así",
-"Solo esta vez",
-"Solo unos Dias",
-"No te vas a arrepentir",
-"le compro empanada ",
-"Último intento ",
-"enserio ?",
-"El destino nos llama ",
-"Bueno… lo intenté"
-];
-
-noBtn.addEventListener("click", function(){
-
-    if(attempts < 10){
-
-        message.textContent = messages[attempts];
-
-        attempts++;
-
-        // hacer más pequeño el botón NO
-        let scaleNo = 1 - attempts * 0.07;
-        noBtn.style.transform = `scale(${scaleNo})`;
-
-        // hacer más grande el botón SI
-        let scaleYes = 1 + attempts * 0.05;
-        yesBtn.style.transform = `translateX(-50%) scale(${scaleYes})`;
-
-        moveNoButton();
-
-    } else {
-
-        noBtn.classList.add("hidden");
-        message.textContent = "Ups, creo que el boton se daño...";
-    }
-
-});
-
-function moveNoButton(){
-
-    let screenWidth = window.innerWidth;
-    let screenHeight = window.innerHeight;
-
-    let randomX;
-    let randomY;
-
-    // 30% probabilidad de acercarse al botón SI
-    if(Math.random() < 0.3){
-
-        let yesRect = yesBtn.getBoundingClientRect();
-
-        randomX = yesRect.left + (Math.random()*100 - 50);
-        randomY = yesRect.top + (Math.random()*100 - 50);
-
-    }else{
-
-        randomX = Math.random() * (screenWidth - 100);
-        randomY = Math.random() * (screenHeight - 50);
-    }
-
-    noBtn.style.left = randomX + "px";
-    noBtn.style.top = randomY + "px";
-}
-
-yesBtn.addEventListener("click", function(){
-    document.getElementById("mainScreen").classList.add("hidden");
-    document.getElementById("formScreen").classList.remove("hidden");
-});
-
-document.getElementById("contactForm").addEventListener("submit", function(e){
-    e.preventDefault();
-
-    let inputs = this.querySelectorAll("input, textarea, select");
-
-    let resultHTML = `
-        <h2> mi objetivo, ${inputs[0].value} ✨</h2>
-        <p><strong>Número:</strong> ${inputs[1].value}</p>
-        <p><strong>Instagram:</strong> ${inputs[2].value}</p>
-        <p><strong>Motivo:</strong> ${inputs[3].value}</p>
-        <p><strong>Plan favorito:</strong> ${inputs[4].value}</p>
-        <h3>Te voy a seguir y mas tarde le escribo jejejeje</h3>
-    `;
-
-    let resultCard = document.getElementById("resultCard");
-    resultCard.innerHTML = resultHTML;
-    resultCard.classList.remove("hidden");
-
-    this.reset();
-});
-</script>
-
+    <script src="script.js"></script>
 </body>
 </html>
