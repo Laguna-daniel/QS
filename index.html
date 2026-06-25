@@ -1,99 +1,1147 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>✦ El Cuarto de Sara ✦</title>
-    <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>🌌 los Gustos de Sara</title>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            overflow: hidden;
+            background: #000;
+            font-family: -apple-system, 'Segoe UI', Arial, sans-serif;
+            color: #fff;
+            cursor: default;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: none;
+        }
+
+        /* Loading Screen */
+        #loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 1.5s ease, visibility 1.5s ease;
+        }
+
+        #loading.fade-out {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        #loading h1 {
+            font-size: clamp(2rem, 6vw, 3.5rem);
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 50%, #ffecd2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+            text-shadow: 0 0 30px rgba(245,87,108,0.3);
+        }
+
+        .loader {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top-color: #f5576c;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.05); }
+        }
+
+        /* HUD */
+        #hud {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 12px 20px;
+            border-radius: 15px;
+            border: 1px solid rgba(255,255,255,0.08);
+            text-align: center;
+            z-index: 100;
+            font-size: clamp(0.7rem, 1.5vw, 0.9rem);
+            opacity: 0;
+            transition: opacity 1s ease;
+            pointer-events: none;
+            max-width: 90%;
+        }
+
+        #hud.show {
+            opacity: 1;
+        }
+
+        #hud .title {
+            font-size: clamp(0.9rem, 2vw, 1.1rem);
+            font-weight: bold;
+            margin-bottom: 3px;
+            color: #f5576c;
+        }
+
+        #hud .controls {
+            color: rgba(255,255,255,0.5);
+            font-size: clamp(0.6rem, 1.2vw, 0.8rem);
+        }
+
+        /* Panel holográfico mejorado */
+        #planet-panel {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.85);
+            background: rgba(10,10,30,0.92);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 25px;
+            padding: 30px;
+            max-width: 450px;
+            width: 92%;
+            z-index: 200;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 30px 80px rgba(0,0,0,0.9), 0 0 60px rgba(245,87,108,0.15);
+            pointer-events: none;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        #planet-panel.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translate(-50%, -50%) scale(1);
+            pointer-events: auto;
+        }
+
+        #planet-panel .close-btn {
+            position: absolute;
+            top: 12px;
+            right: 16px;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: rgba(255,255,255,0.5);
+            transition: all 0.3s;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            -webkit-tap-highlight-color: transparent;
+            font-weight: 300;
+            line-height: 1;
+        }
+
+        #planet-panel .close-btn:hover {
+            color: #fff;
+            background: rgba(245,87,108,0.2);
+            border-color: rgba(245,87,108,0.3);
+            transform: rotate(90deg);
+        }
+
+        #planet-panel .close-btn:active {
+            transform: rotate(90deg) scale(0.9);
+        }
+
+        #planet-panel .panel-image {
+            width: 100%;
+            height: 200px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            border: 1px solid rgba(255,255,255,0.05);
+            overflow: hidden;
+            position: relative;
+        }
+
+        #planet-panel .panel-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        #planet-panel .panel-image .image-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background: linear-gradient(transparent, rgba(10,10,30,0.8));
+        }
+
+        #planet-panel h2 {
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        #planet-panel .content {
+            color: rgba(255,255,255,0.85);
+            line-height: 1.7;
+            font-size: clamp(0.9rem, 1.8vw, 1rem);
+        }
+
+        #planet-panel .content .label {
+            color: rgba(255,255,255,0.4);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+        }
+
+        #planet-panel .content .value {
+            margin-bottom: 12px;
+            padding: 15px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            border-left: 3px solid rgba(245,87,108,0.4);
+        }
+
+        /* Scrollbar personalizada */
+        #planet-panel::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        #planet-panel::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        #planet-panel::-webkit-scrollbar-thumb {
+            background: rgba(245,87,108,0.3);
+            border-radius: 10px;
+        }
+
+        /* Responsive iPhone */
+        @media (max-width: 768px) {
+            #planet-panel {
+                padding: 20px;
+                max-width: 95%;
+                border-radius: 20px;
+            }
+
+            #planet-panel .panel-image {
+                height: 150px;
+                font-size: 3rem;
+            }
+
+            #planet-panel .close-btn {
+                top: 10px;
+                right: 12px;
+                font-size: 1.5rem;
+                width: 40px;
+                height: 40px;
+            }
+
+            #hud {
+                bottom: 15px;
+                padding: 10px 15px;
+                border-radius: 12px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            #planet-panel .panel-image {
+                height: 120px;
+                font-size: 2.5rem;
+            }
+        }
+
+        /* Animación de entrada del panel */
+        @keyframes panelIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.8) rotate(-5deg);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1) rotate(0deg);
+            }
+        }
+
+        #planet-panel.active {
+            animation: panelIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+    </style>
 </head>
 <body>
-    <!-- LOADING -->
+
+    <!-- Loading Screen -->
     <div id="loading">
-        <div class="loader-title">✦ cuarto de Sara ✦</div>
-        <div class="loader-sub">inesperado no ? JSJSJSJ</div>
-        <div class="loader-bar"><div class="loader-bar-inner"></div></div>
+        <h1>🌌 Universo de Sara</h1>
+        <div class="loader"></div>
     </div>
 
-    <!-- POPUP -->
-    <div class="popup-message" id="popupMessage">
-        <span class="emoji" id="popupEmoji">💜</span>
-        <span class="text" id="popupText">¡Mensaje mágico!</span>
+    <!-- HUD -->
+    <div id="hud">
+        <div class="title">✨ Explora el universo de Sara</div>
+        <div class="controls">🖱 Toca un planeta · ✋ Arrastra para orbitar · 🔄 Scroll para zoom</div>
     </div>
 
-    <div class="container">
-        <!-- HEADER -->
-        <div class="header">
-            <h1>✦ El Cuarto de Sara ✦</h1>
-            <p>esto lo hize por me nacio hacerlo, por que ? nose </p>
-            <div class="subtitle"> Toque cualquier tarjeta o abre la burbuja para que vea un mensaje</div>
+    <!-- Panel holográfico -->
+    <div id="planet-panel">
+        <button class="close-btn" id="close-panel">✕</button>
+        <div class="panel-image" id="panel-image">🌍</div>
+        <h2 id="panel-title">Planeta</h2>
+        <div class="content">
+            <div class="label">💫 Descripción</div>
+            <div class="value" id="panel-desc">Contenido del planeta</div>
         </div>
-
-        <!-- GRID DE TARJETAS -->
-        <div class="grid">
-            <div class="card" data-type="elephant">
-                <img src="images/dibujar-elefante-kawaii-tierno.jpg"Elefante" class="card-image" id="imgElefante">
-                <div class="card-title">🐘 Mi Animal Favorito</div>
-                <div class="card-description">Los elefantes son las criaturas más sabias y hermosas. ¡El animal que más raro que me han dicho que le gustan!</div>
-                <span class="card-badge">El Favorito</span>
-            </div>
-
-            <div class="card" data-type="kitty">
-                <img src="images/hello kitty.jpg" alt="Hello Kitty" class="card-image" id="imgKitty">
-                <div class="card-title">🎀 Mi Muñeco Favorito</div>
-                <div class="card-description">Hello Kitty gana por completo. La compañera más tierna y el personaje preferido de sara</div>
-                <span class="card-badge">🌸 un rosa</span>
-            </div>
-
-            <div class="card" data-type="sushi">
-                <img src="URL_IMAGEN_SUSHI" alt="Sushi" class="card-image" id="imgSushi">
-                <div class="card-title">🍣 Mi Comida Favorita</div>
-                <div class="card-description">Un buen plato de sushi,es que le gusta la comida japonesa?</div>
-                <span class="card-badge">sushi</span>
-            </div>
-
-            <div class="card" data-type="peluches">
-                <img src="URL_IMAGEN_PELUCHES" alt="Peluches" class="card-image" id="imgPeluches">
-                <div class="card-title">🧸 Me encantan los peluches</div>
-                <div class="card-description">Esponjosos, tiernos y hermosos, justo como a Sara le fascinan para abrazarlos, supongo que tiene varios no?</div>
-                <span class="card-badge">💕 Súper Cute</span>
-            </div>
-
-            <div class="card" data-type="rapunzel">
-                <img src="images/rapunzel.jpg" alt="Rapunzel" class="card-image" id="imgRapunzel">
-                <div class="card-title">✨ Rapunzel</div>
-                <div class="card-description">si le gusta rapunzel es por que no la dejan salir no? le atine? JAJAJAJAJ</div>
-                <span class="card-badge">🌟 pida permiso para salir mejor </span>
-            </div>
-
-            <div class="card" data-type="purple">
-                <img src="URL_IMAGEN_MORADO" alt="Color Morado" class="card-image" id="imgMorado">
-                <div class="card-title">💜 Color Morado</div>
-                <div class="card-description">no sabia que poner de imagen, pero pues ahi tiene un planeta</div>
-                <span class="card-badge">morado</span>
-            </div>
-        </div>
-
-        <!-- AGENTE LAGUNA -->
-        <div class="laguna-agent-container">
-            <div class="laguna-bubble" id="lagunaBubble" onclick="toggleLagunaChat()">🔮</div>
-            <div class="laguna-window" id="lagunaWindow">
-                <div class="laguna-header">
-                    <span>Laguna IA</span>
-                    <span class="close-btn" onclick="toggleLagunaChat()">✕</span>
-                </div>
-                <div class="laguna-chat-area" id="lagunaChatArea">
-                    <div class="laguna-msg bot">¡Hola, sara! casi que no abre el chat, ahora no soy yo el que hace las preguntas, cualquier cosa estoy aca para explicarle.</div>
-                </div>
-                <div class="laguna-input-area">
-                    <input type="text" id="lagunaInput" placeholder="Pregúntame lo que sea, mi niña..." onkeydown="if(event.key === 'Enter') sendLagunaMessage()">
-                    <button onclick="sendLagunaMessage()">Enviar</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="footer">me trasnoche haciendo esto</div>
     </div>
 
-    <script src="script.js"></script>
+    <!-- Three.js -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+        import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+        import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+        
+        // --- DATOS DE SARA ACTUALIZADOS ---
+        const planetData = [
+            {
+                id: 'elefante',
+                name: '🐘 Elefante',
+                color: 0x8B8B8B,
+                description: 'Su animal favorito. Le encanta su inteligencia, memoria y la forma en que cuidan de su manada.',
+                emoji: '🐘',
+                image: 'images/dibujar-elefante-kawaii-tierno.jpg'
+            },
+            {
+                id: 'sushi',
+                name: '🍣 Sushi',
+                color: 0xFF6B6B,
+                description: 'Su comida favorita. Le fascina la variedad de sabores, la presentación artística y la frescura del pescado.',
+                emoji: '🍣',
+                image: 'images/sushi.jpg'
+            },
+            {
+                id: 'hellokitty',
+                name: '🎀 Hello Kitty',
+                color: 0xFFB6C1,
+                description: 'Le encanta Hello Kitty por su ternura, estilo kawaii y el mensaje de amistad que representa.',
+                emoji: '🎀',
+                image: 'images/hello kitty.jpg '
+            },
+            {
+                id: 'rapunzel',
+                name: '👑 Rapunzel',
+                color: 0x9370DB,
+                description: 'Su princesa favorita. Adora su valentía, cabello mágico y su espíritu libre y soñador.',
+                emoji: '👑',
+                image: 'images/rapunzel.jpg '
+            },
+            {
+                id: 'morado',
+                name: '💜 Morado',
+                color: 0x9B59B6,
+                description: 'Su color favorito. Le transmite creatividad, misterio y una energía espiritual muy especial.',
+                emoji: '💜',
+                image: 'images/morado.jpg '
+            },
+            {
+                id: 'peluches',
+                name: '🧸 Peluches',
+                color: 0xD4A574,
+                description: 'Le encantan los peluches por su suavidad, la compañía que brindan y los recuerdos de infancia.',
+                emoji: '🧸',
+                image: 'images/peluche.jpg '
+            },
+            {
+                id: 'cantantes',
+                name: '🎵 Cantantes Favoritos',
+                color: 0xFF6B35,
+                description: 'Le encanta la música de Blessd, Morat y Feid. Cada uno tiene un estilo único que la hace vibrar y soñar.',
+                emoji: '🎵',
+                image: 'images/blessed_scmusic.jpg'
+            }
+        ];
+
+        // --- SETUP ---
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x000008);
+        scene.fog = new THREE.FogExp2(0x000008, 0.0015);
+
+        // Camera
+        const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 8, 30);
+        camera.lookAt(0, 0, 0);
+
+        // Renderer
+        const renderer = new THREE.WebGLRenderer({ 
+            antialias: true, 
+            alpha: false,
+            powerPreference: "high-performance"
+        });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.5;
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        renderer.shadowMap.bias = 0.0001;
+        document.body.appendChild(renderer.domElement);
+
+        // Controls
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.minDistance = 8;
+        controls.maxDistance = 60;
+        controls.autoRotate = true;
+        controls.autoRotateSpeed = 0.3;
+        controls.target.set(0, 0, 0);
+        controls.enablePan = false;
+        controls.maxPolarAngle = Math.PI / 2.2;
+        controls.minPolarAngle = 0.1;
+
+        // --- POST PROCESSING ---
+        const composer = new EffectComposer(renderer);
+        const renderPass = new RenderPass(scene, camera);
+        composer.addPass(renderPass);
+
+        const bloomPass = new UnrealBloomPass(
+            new THREE.Vector2(window.innerWidth, window.innerHeight),
+            0.4, // strength - aumentado para más brillo
+            0.3, // radius
+            0.1 // threshold
+        );
+        composer.addPass(bloomPass);
+
+        // --- ILUMINACIÓN REALISTA ---
+        
+        // Luz ambiental muy tenue para no perder detalles en sombras
+        const ambientLight = new THREE.AmbientLight(0x111122, 0.3);
+        scene.add(ambientLight);
+
+        // Luz principal desde el agujero negro (simulando luz de acreción)
+        const blackHoleLight = new THREE.PointLight(0xf5576c, 5, 30);
+        blackHoleLight.position.set(0, 0, 0);
+        blackHoleLight.decay = 1.5;
+        scene.add(blackHoleLight);
+
+        // Luz de relleno azul para dar contraste
+        const fillLightBlue = new THREE.DirectionalLight(0x4466ff, 0.4);
+        fillLightBlue.position.set(-10, 5, -10);
+        scene.add(fillLightBlue);
+
+        // Luz cálida desde arriba
+        const warmLight = new THREE.DirectionalLight(0xffaa66, 0.6);
+        warmLight.position.set(10, 15, 5);
+        warmLight.castShadow = true;
+        scene.add(warmLight);
+
+        // Luz de borde para resaltar siluetas
+        const rimLight = new THREE.DirectionalLight(0xff66aa, 0.5);
+        rimLight.position.set(-5, 0, 15);
+        scene.add(rimLight);
+
+        // Luz de fondo para dar profundidad
+        const backLight = new THREE.DirectionalLight(0x6644ff, 0.3);
+        backLight.position.set(0, -10, -10);
+        scene.add(backLight);
+
+        // --- AGUJERO NEGRO HIPERREALISTA ---
+        const blackHoleGroup = new THREE.Group();
+        
+        // Core oscuro absoluto
+        const coreGeo = new THREE.SphereGeometry(2.2, 96, 96);
+        const coreMat = new THREE.MeshStandardMaterial({
+            color: 0x000000,
+            roughness: 0,
+            metalness: 1,
+            emissive: 0x110022,
+            emissiveIntensity: 0.3
+        });
+        const core = new THREE.Mesh(coreGeo, coreMat);
+        blackHoleGroup.add(core);
+
+        // Efecto de lente gravitacional (anillos concéntricos)
+        const lensRings = [];
+        for (let i = 0; i < 8; i++) {
+            const radius = 2.5 + i * 0.6;
+            const ringGeo = new THREE.RingGeometry(radius - 0.05, radius + 0.05, 64);
+            const ringMat = new THREE.MeshBasicMaterial({
+                color: new THREE.Color().setHSL(0.95 + i * 0.01, 0.8, 0.3 + i * 0.05),
+                side: THREE.DoubleSide,
+                transparent: true,
+                opacity: 0.3 - i * 0.03,
+                blending: THREE.AdditiveBlending
+            });
+            const ring = new THREE.Mesh(ringGeo, ringMat);
+            ring.rotation.x = Math.PI / 2.2 + Math.sin(i) * 0.1;
+            ring.rotation.z = i * 0.1;
+            blackHoleGroup.add(ring);
+            lensRings.push(ring);
+        }
+
+        // Disco de acreción principal con gradiente de temperatura
+        const diskGeo = new THREE.RingGeometry(2.8, 7.0, 128);
+        const diskMat = new THREE.MeshBasicMaterial({
+            color: 0xf5576c,
+            side: THREE.DoubleSide,
+            transparent: true,
+            opacity: 0.7,
+            blending: THREE.AdditiveBlending
+        });
+        const disk = new THREE.Mesh(diskGeo, diskMat);
+        disk.rotation.x = Math.PI / 2.1;
+        disk.rotation.z = 0.3;
+        blackHoleGroup.add(disk);
+
+        // Disco exterior con color más frío
+        const diskOuterGeo = new THREE.RingGeometry(4.5, 8.5, 128);
+        const diskOuterMat = new THREE.MeshBasicMaterial({
+            color: 0x8844aa,
+            side: THREE.DoubleSide,
+            transparent: true,
+            opacity: 0.4,
+            blending: THREE.AdditiveBlending
+        });
+        const diskOuter = new THREE.Mesh(diskOuterGeo, diskOuterMat);
+        diskOuter.rotation.x = Math.PI / 2.0;
+        diskOuter.rotation.z = -0.2;
+        blackHoleGroup.add(diskOuter);
+
+        // Halo de brillo intenso
+        const glowGeo = new THREE.SphereGeometry(3.0, 48, 48);
+        const glowMat = new THREE.MeshBasicMaterial({
+            color: 0xf5576c,
+            transparent: true,
+            opacity: 0.15,
+            blending: THREE.AdditiveBlending
+        });
+        const glow = new THREE.Mesh(glowGeo, glowMat);
+        blackHoleGroup.add(glow);
+
+        // Halo exterior más sutil
+        const glowOuterGeo = new THREE.SphereGeometry(4.5, 48, 48);
+        const glowOuterMat = new THREE.MeshBasicMaterial({
+            color: 0x8844ff,
+            transparent: true,
+            opacity: 0.05,
+            blending: THREE.AdditiveBlending
+        });
+        const glowOuter = new THREE.Mesh(glowOuterGeo, glowOuterMat);
+        blackHoleGroup.add(glowOuter);
+
+        scene.add(blackHoleGroup);
+
+        // --- SISTEMA SOLAR CON ÓRBITAS ELÍPTICAS ---
+        function createOrbit(radius, color = 0xffffff, opacity = 0.05, eccentricity = 0) {
+            const points = [];
+            const segments = 128;
+            for (let i = 0; i <= segments; i++) {
+                const angle = (i / segments) * Math.PI * 2;
+                const r = radius * (1 - eccentricity * Math.cos(angle));
+                points.push(new THREE.Vector3(
+                    Math.cos(angle) * r,
+                    0,
+                    Math.sin(angle) * r
+                ));
+            }
+            const geometry = new THREE.BufferGeometry().setFromPoints(points);
+            const material = new THREE.LineBasicMaterial({
+                color: color,
+                transparent: true,
+                opacity: opacity,
+                blending: THREE.AdditiveBlending
+            });
+            const orbit = new THREE.Line(geometry, material);
+            scene.add(orbit);
+        }
+
+        // Crear órbitas con diferentes colores y excentricidades
+        const orbitConfigs = [
+            { radius: 5.5, color: 0xff6b6b, opacity: 0.1, ecc: 0.02 },
+            { radius: 7.5, color: 0xffb6c1, opacity: 0.1, ecc: 0.03 },
+            { radius: 9.5, color: 0x9370db, opacity: 0.1, ecc: 0.01 },
+            { radius: 11.5, color: 0x9b59b6, opacity: 0.08, ecc: 0.04 },
+            { radius: 13.5, color: 0xd4a574, opacity: 0.08, ecc: 0.02 },
+            { radius: 15.5, color: 0xff6b35, opacity: 0.08, ecc: 0.03 },
+            { radius: 17.5, color: 0x4fc3f7, opacity: 0.06, ecc: 0.05 }
+        ];
+
+        orbitConfigs.forEach(config => {
+            createOrbit(config.radius, config.color, config.opacity, config.ecc);
+        });
+
+        // --- PLANETAS HIPERREALISTAS ---
+        const planets = [];
+        const planetMeshes = [];
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+        let hoveredPlanet = null;
+        let selectedPlanet = null;
+
+        function createAdvancedTexture(color, size = 512) {
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size / 2;
+            const ctx = canvas.getContext('2d');
+            
+            const baseColor = new THREE.Color(color);
+            
+            // Fondo con gradiente esférico
+            const grad = ctx.createRadialGradient(
+                size * 0.4, size * 0.25, 0,
+                size * 0.4, size * 0.25, size * 0.6
+            );
+            
+            const lightColor = baseColor.clone().multiplyScalar(1.4);
+            const darkColor = baseColor.clone().multiplyScalar(0.5);
+            
+            grad.addColorStop(0, lightColor.getStyle());
+            grad.addColorStop(0.5, baseColor.getStyle());
+            grad.addColorStop(0.8, darkColor.getStyle());
+            grad.addColorStop(1, new THREE.Color(0x000000).getStyle());
+            
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, size, size / 2);
+            
+            // Cráteres realistas
+            for (let i = 0; i < 15 + Math.random() * 25; i++) {
+                const x = Math.random() * size;
+                const y = Math.random() * size / 2;
+                const r = 3 + Math.random() * 20;
+                
+                // Sombra del cráter
+                ctx.beginPath();
+                ctx.arc(x + r * 0.2, y + r * 0.2, r, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(0,0,0,${0.2 + Math.random() * 0.3})`;
+                ctx.fill();
+                
+                // Cráter
+                ctx.beginPath();
+                ctx.arc(x, y, r, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(0,0,0,${0.1 + Math.random() * 0.2})`;
+                ctx.fill();
+                
+                // Borde iluminado del cráter
+                ctx.beginPath();
+                ctx.arc(x - r * 0.3, y - r * 0.3, r * 0.4, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255,255,255,${0.05 + Math.random() * 0.1})`;
+                ctx.fill();
+            }
+            
+            // Bandas atmosféricas
+            for (let i = 0; i < 2 + Math.random() * 4; i++) {
+                const y = 20 + Math.random() * (size / 2 - 40);
+                const height = 3 + Math.random() * 12;
+                const alpha = 0.05 + Math.random() * 0.1;
+                
+                ctx.fillStyle = `rgba(255,255,255,${alpha})`;
+                ctx.fillRect(0, y, size, height);
+                
+                // Sombra suave en la banda
+                const shadowGrad = ctx.createLinearGradient(0, y - 2, 0, y + height + 2);
+                shadowGrad.addColorStop(0, `rgba(0,0,0,0)`);
+                shadowGrad.addColorStop(0.3, `rgba(0,0,0,${alpha * 0.5})`);
+                shadowGrad.addColorStop(0.7, `rgba(0,0,0,${alpha * 0.5})`);
+                shadowGrad.addColorStop(1, `rgba(0,0,0,0)`);
+                ctx.fillStyle = shadowGrad;
+                ctx.fillRect(0, y - 2, size, height + 4);
+            }
+            
+            return new THREE.CanvasTexture(canvas);
+        }
+
+        // Crear planetas con texturas avanzadas
+        planetData.forEach((data, index) => {
+            const group = new THREE.Group();
+            
+            // Tamaño basado en el índice (planetas más lejanos un poco más pequeños)
+            const sizeBase = 0.7 + Math.random() * 0.4;
+            const sizeFactor = 1 - (index / planetData.length) * 0.2;
+            const size = sizeBase * sizeFactor;
+            
+            // Textura procedural avanzada
+            const texture = createAdvancedTexture(data.color, 512);
+            
+            // Material PBR avanzado
+            const mat = new THREE.MeshStandardMaterial({
+                map: texture,
+                roughness: 0.2 + Math.random() * 0.3,
+                metalness: 0.3 + Math.random() * 0.4,
+                emissive: data.color,
+                emissiveIntensity: 0.05,
+                envMapIntensity: 1.2,
+                clearcoat: 0.1 + Math.random() * 0.2,
+                clearcoatRoughness: 0.3
+            });
+            
+            const geo = new THREE.SphereGeometry(size, 48, 48);
+            const mesh = new THREE.Mesh(geo, mat);
+            mesh.castShadow = true;
+            mesh.receiveShadow = true;
+            mesh.userData = { planetIndex: index, data: data };
+            group.add(mesh);
+
+            // Atmósfera con brillo
+            const atmoGeo = new THREE.SphereGeometry(size * 1.15, 32, 32);
+            const atmoMat = new THREE.MeshBasicMaterial({
+                color: data.color,
+                transparent: true,
+                opacity: 0.06,
+                blending: THREE.AdditiveBlending,
+                side: THREE.FrontSide
+            });
+            const atmo = new THREE.Mesh(atmoGeo, atmoMat);
+            group.add(atmo);
+
+            // Anillo de polvo (algunos planetas)
+            if (index % 2 === 0 && index > 0) {
+                const ringGeo = new THREE.RingGeometry(size * 1.3, size * 2.2, 64);
+                const ringMat = new THREE.MeshBasicMaterial({
+                    color: data.color,
+                    transparent: true,
+                    opacity: 0.08,
+                    side: THREE.DoubleSide,
+                    blending: THREE.AdditiveBlending
+                });
+                const ring = new THREE.Mesh(ringGeo, ringMat);
+                ring.rotation.x = Math.PI / 2.5 + Math.random() * 0.3;
+                ring.rotation.z = Math.random() * 0.5;
+                group.add(ring);
+            }
+
+            // Posición en órbita con inclinación
+            const angle = (index / planetData.length) * Math.PI * 2 + Math.random() * 0.3;
+            const config = orbitConfigs[index];
+            const radius = config ? config.radius : 5 + index * 1.8;
+            const height = (Math.random() - 0.5) * 3;
+            
+            // Excentricidad orbital
+            const ecc = config ? config.ecc : 0.02;
+            const r = radius * (1 - ecc * Math.cos(angle));
+            
+            group.position.x = Math.cos(angle) * r;
+            group.position.z = Math.sin(angle) * r;
+            group.position.y = height;
+            
+            group.userData = {
+                angle: angle,
+                radius: radius,
+                height: height,
+                speed: 0.08 + (1 / (radius + 2)) * 0.25,
+                floatSpeed: 0.2 + Math.random() * 0.3,
+                floatAmt: 0.15 + Math.random() * 0.2,
+                baseY: height,
+                rotationSpeed: 0.05 + Math.random() * 0.15,
+                eccentricity: ecc,
+                orbitRadius: radius
+            };
+
+            scene.add(group);
+            planets.push(group);
+            planetMeshes.push(mesh);
+        });
+
+        // --- SISTEMA DE ESTRELLAS DINÁMICO ---
+        function createDynamicStars() {
+            const count = 5000;
+            const positions = new Float32Array(count * 3);
+            const colors = new Float32Array(count * 3);
+            const sizes = new Float32Array(count);
+
+            for (let i = 0; i < count; i++) {
+                // Distribución en capas
+                const layer = Math.random();
+                let radius;
+                if (layer < 0.3) {
+                    radius = 30 + Math.random() * 40; // Cerca
+                } else if (layer < 0.7) {
+                    radius = 70 + Math.random() * 60; // Medio
+                } else {
+                    radius = 130 + Math.random() * 70; // Lejos
+                }
+                
+                const theta = Math.random() * Math.PI * 2;
+                const phi = Math.acos((Math.random() * 2) - 1);
+
+                positions[i*3] = radius * Math.sin(phi) * Math.cos(theta);
+                positions[i*3+1] = radius * Math.cos(phi) * 0.6;
+                positions[i*3+2] = radius * Math.sin(phi) * Math.sin(theta);
+
+                // Color de estrella basado en temperatura
+                const temp = Math.random();
+                if (temp < 0.1) {
+                    // Estrellas azules (calientes)
+                    colors[i*3] = 0.7;
+                    colors[i*3+1] = 0.8;
+                    colors[i*3+2] = 1.0;
+                    sizes[i] = 0.3 + Math.random() * 0.4;
+                } else if (temp < 0.3) {
+                    // Estrellas blancas
+                    colors[i*3] = 1.0;
+                    colors[i*3+1] = 1.0;
+                    colors[i*3+2] = 1.0;
+                    sizes[i] = 0.2 + Math.random() * 0.3;
+                } else if (temp < 0.6) {
+                    // Estrellas amarillas (como el sol)
+                    colors[i*3] = 1.0;
+                    colors[i*3+1] = 0.9;
+                    colors[i*3+2] = 0.6;
+                    sizes[i] = 0.15 + Math.random() * 0.25;
+                } else {
+                    // Estrellas rojas (frías)
+                    colors[i*3] = 1.0;
+                    colors[i*3+1] = 0.5;
+                    colors[i*3+2] = 0.3;
+                    sizes[i] = 0.1 + Math.random() * 0.2;
+                }
+            }
+
+            const geo = new THREE.BufferGeometry();
+            geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+            geo.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+
+            const mat = new THREE.PointsMaterial({
+                size: 0.3,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.9,
+                blending: THREE.AdditiveBlending,
+                sizeAttenuation: true
+            });
+
+            const stars = new THREE.Points(geo, mat);
+            scene.add(stars);
+            return stars;
+        }
+        const stars = createDynamicStars();
+
+        // --- NEBULOSA REALISTA ---
+        function createRealisticNebula() {
+            const count = 3000;
+            const positions = new Float32Array(count * 3);
+            const colors = new Float32Array(count * 3);
+
+            for (let i = 0; i < count; i++) {
+                // Forma de nebulosa espiral
+                const arm = Math.floor(Math.random() * 3);
+                const armAngle = (arm / 3) * Math.PI * 2;
+                const dist = 8 + Math.random() * 25;
+                const scatter = (Math.random() - 0.5) * 4;
+                
+                const angle = armAngle + (dist / 30) * 2 + scatter * 0.2;
+                
+                positions[i*3] = Math.cos(angle) * dist + (Math.random() - 0.5) * 3;
+                positions[i*3+1] = (Math.random() - 0.5) * 6 + Math.sin(dist * 0.5) * 1.5;
+                positions[i*3+2] = Math.sin(angle) * dist + (Math.random() - 0.5) * 3;
+
+                // Colores de nebulosa
+                const t = (dist - 8) / 25;
+                if (arm === 0) {
+                    // Nebulosa rosa/roja
+                    colors[i*3] = 0.8 + Math.random() * 0.2;
+                    colors[i*3+1] = 0.2 + Math.random() * 0.2;
+                    colors[i*3+2] = 0.3 + Math.random() * 0.2;
+                } else if (arm === 1) {
+                    // Nebulosa azul/púrpura
+                    colors[i*3] = 0.3 + Math.random() * 0.2;
+                    colors[i*3+1] = 0.2 + Math.random() * 0.2;
+                    colors[i*3+2] = 0.8 + Math.random() * 0.2;
+                } else {
+                    // Nebulosa verde/amarilla
+                    colors[i*3] = 0.6 + Math.random() * 0.3;
+                    colors[i*3+1] = 0.7 + Math.random() * 0.3;
+                    colors[i*3+2] = 0.2 + Math.random() * 0.2;
+                }
+            }
+
+            const geo = new THREE.BufferGeometry();
+            geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+            const mat = new THREE.PointsMaterial({
+                size: 0.15,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.2,
+                blending: THREE.AdditiveBlending,
+                sizeAttenuation: true,
+                depthWrite: false
+            });
+
+            const nebula = new THREE.Points(geo, mat);
+            scene.add(nebula);
+            return nebula;
+        }
+        const nebula = createRealisticNebula();
+
+        // --- INTERACTION MEJORADA ---
+        renderer.domElement.addEventListener('click', (event) => {
+            const rect = renderer.domElement.getBoundingClientRect();
+            mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+            mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(planetMeshes);
+
+            if (intersects.length > 0) {
+                const hit = intersects[0].object;
+                const idx = hit.userData.planetIndex;
+                if (idx !== undefined) {
+                    showPlanetPanel(idx);
+                }
+            }
+        });
+
+        // Touch para móvil mejorado
+        let touchStartTime = 0;
+        let touchStartPos = { x: 0, y: 0 };
+
+        renderer.domElement.addEventListener('touchstart', (event) => {
+            if (event.touches.length === 1) {
+                const touch = event.touches[0];
+                touchStartTime = Date.now();
+                touchStartPos.x = touch.clientX;
+                touchStartPos.y = touch.clientY;
+            }
+        });
+
+        renderer.domElement.addEventListener('touchend', (event) => {
+            if (event.changedTouches.length === 1) {
+                const touch = event.changedTouches[0];
+                const dt = Date.now() - touchStartTime;
+                const dx = touch.clientX - touchStartPos.x;
+                const dy = touch.clientY - touchStartPos.y;
+                const dist = Math.sqrt(dx*dx + dy*dy);
+                
+                // Solo considerar tap si es rápido y corto
+                if (dt < 300 && dist < 20) {
+                    const rect = renderer.domElement.getBoundingClientRect();
+                    mouse.x = ((touch.clientX - rect.left) / rect.width) * 2 - 1;
+                    mouse.y = -((touch.clientY - rect.top) / rect.height) * 2 + 1;
+
+                    raycaster.setFromCamera(mouse, camera);
+                    const intersects = raycaster.intersectObjects(planetMeshes);
+                    if (intersects.length > 0) {
+                        const hit = intersects[0].object;
+                        const idx = hit.userData.planetIndex;
+                        if (idx !== undefined) {
+                            showPlanetPanel(idx);
+                        }
+                    }
+                }
+            }
+        });
+
+        // Hover
+        renderer.domElement.addEventListener('mousemove', (event) => {
+            const rect = renderer.domElement.getBoundingClientRect();
+            mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+            mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+        });
+
+        // --- PANEL MEJORADO ---
+        const panel = document.getElementById('planet-panel');
+        const panelTitle = document.getElementById('panel-title');
+        const panelDesc = document.getElementById('panel-desc');
+        const panelImage = document.getElementById('panel-image');
+        const closeBtn = document.getElementById('close-panel');
+
+        function showPlanetPanel(index) {
+            const data = planetData[index];
+            panelTitle.textContent = data.name;
+            panelDesc.textContent = data.description;
+            
+            if (data.image) {
+                panelImage.innerHTML = `
+                    <img src="${data.image}" alt="${data.name}" loading="lazy" />
+                    <div class="image-overlay"></div>
+                `;
+                panelImage.style.fontSize = '0';
+            } else {
+                panelImage.textContent = data.emoji || '🌍';
+                panelImage.style.fontSize = '4rem';
+            }
+            
+            panel.classList.add('active');
+            controls.autoRotate = false;
+            selectedPlanet = index;
+        }
+
+        function hidePanel() {
+            panel.classList.remove('active');
+            controls.autoRotate = true;
+            selectedPlanet = null;
+        }
+
+        closeBtn.addEventListener('click', hidePanel);
+        
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') hidePanel();
+        });
+
+        // --- LOADING ---
+        setTimeout(() => {
+            document.getElementById('loading').classList.add('fade-out');
+            document.getElementById('hud').classList.add('show');
+        }, 2000);
+
+        // --- RESIZE ---
+        window.addEventListener('resize', () => {
+            const w = window.innerWidth;
+            const h = window.innerHeight;
+            camera.aspect = w / h;
+            camera.updateProjectionMatrix();
+            renderer.setSize(w, h);
+            composer.setSize(w, h);
+        });
+
+        // --- ANIMATION LOOP MEJORADO ---
+        const clock = new THREE.Clock();
+
+        function animate() {
+            const time = clock.getElapsedTime();
+            
+            // Rotación del agujero negro y efectos
+            blackHoleGroup.rotation.y = time * 0.02;
+            core.material.emissiveIntensity = 0.3 + Math.sin(time * 0.2) * 0.2;
+            
+            // Animar anillos de lente gravitacional
+            lensRings.forEach((ring, i) => {
+                ring.rotation.x = Math.PI / 2.2 + Math.sin(time * 0.1 + i * 0.5) * 0.05;
+                ring.material.opacity = 0.25 - i * 0.025 + Math.sin(time * 0.3 + i) * 0.05;
+            });
+            
+            // Disco de acreción pulsante
+            disk.material.opacity = 0.6 + Math.sin(time * 0.15) * 0.1;
+            diskOuter.material.opacity = 0.3 + Math.sin(time * 0.1 + 1) * 0.1;
+            
+            // Luz del agujero negro pulsante
+            blackHoleLight.intensity = 4 + Math.sin(time * 0.3) * 1;
+            
+            // Animar planetas con órbitas elípticas
+            planets.forEach((group, i) => {
+                const data = group.userData;
+                // Órbita elíptica
+                data.angle += data.speed * 0.01;
+                const ecc = data.eccentricity || 0.02;
+                const r = data.orbitRadius * (1 - ecc * Math.cos(data.angle));
+                group.position.x = Math.cos(data.angle) * r;
+                group.position.z = Math.sin(data.angle) * r;
+                // Flotación
+                group.position.y = data.baseY + Math.sin(time * data.floatSpeed + i * 1.3) * data.floatAmt;
+                // Rotación propia
+                group.children[0].rotation.x = time * data.rotationSpeed * 0.3;
+                group.children[0].rotation.y = time * data.rotationSpeed;
+                // Atmósfera pulsante
+                if (group.children[1]) {
+                    group.children[1].rotation.x = time * 0.1;
+                    group.children[1].rotation.y = time * 0.15;
+                    group.children[1].material.opacity = 0.04 + Math.sin(time * 0.5 + i) * 0.02;
+                }
+                // Anillo
+                if (group.children[2]) {
+                    group.children[2].rotation.z = time * 0.03 + i * 0.5;
+                }
+            });
+
+            // Hover effect mejorado
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(planetMeshes);
+            
+            planetMeshes.forEach(mesh => {
+                const wasHovered = mesh.userData.hovered;
+                const isHovered = intersects.length > 0 && intersects[0].object === mesh;
+                
+                if (isHovered && !wasHovered) {
+                    mesh.material.emissiveIntensity = 0.4;
+                    mesh.scale.set(1.2, 1.2, 1.2);
+                    document.body.style.cursor = 'pointer';
+                    mesh.userData.hovered = true;
+                    // Efecto de brillo adicional
+                    const atmo = mesh.parent.children[1];
+                    if (atmo && atmo.isMesh) {
+                        atmo.material.opacity = 0.15;
+                    }
+                } else if (!isHovered && wasHovered) {
+                    mesh.material.emissiveIntensity = 0.05;
+                    mesh.scale.set(1, 1, 1);
+                    document.body.style.cursor = 'default';
+                    mesh.userData.hovered = false;
+                    const atmo = mesh.parent.children[1];
+                    if (atmo && atmo.isMesh) {
+                        atmo.material.opacity = 0.04;
+                    }
+                }
+            });
+
+            // Rotación de la nebulosa
+            nebula.rotation.y = time * 0.005;
+            nebula.rotation.x = Math.sin(time * 0.002) * 0.05;
+
+            // Rotación de estrellas
+            stars.rotation.y = time * 0.001;
+
+            // Update controls
+            controls.update();
+
+            // Render con bloom
+            composer.render();
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+
+        // --- KEYBOARD SHORTCUTS ---
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'r' || e.key === 'R') {
+                controls.autoRotate = !controls.autoRotate;
+            }
+        });
+
+        console.log('🌌 Universo de Sara cargado!');
+        console.log('🪐 Haz click en los planetas para explorar');
+        console.log('🔄 Presiona "R" para activar/desactivar rotación automática');
+        console.log('✨ Disfruta de la experiencia inmersiva!');
+
+    </script>
 </body>
 </html>
